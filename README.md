@@ -2,20 +2,23 @@
 
 ```
 📦Indoor_positioning_system
+ ┣ 📂clean_data
+ ┃ ┣ 📄Fun-Ori2Angle.Rdata
+ ┃ ┣ 📄Fun-Ori2Direction.Rdata
+ ┃ ┣ 📄IPS_offline.RData
+ ┃ ┣ 📄IPS_online.RData
+ ┃ ┣ 📄IPS_testingData.RData
+ ┃ ┗ 📄IPS_trainingData.RData
  ┣ 📂etc
  ┃ ┣ 📄annotated_map.png
  ┃ ┣ 📄floorplan.jpg
  ┃ ┗ 📄Projects  Instructions.pdf
- ┣ 📂src
- ┃ ┣ 📂raw_data
- ┃ ┃ ┣ 📄accessPointLocations.txt
- ┃ ┃ ┣ 📄offline.final.trace.txt
- ┃ ┃ ┗ 📄online.final.trace.txt
- ┃ ┣ 📄IPS_Offline.RData
- ┃ ┣ 📄IPS_Online.RData
- ┃ ┣ 📄Step.1_Data_Cleaning.qmd
- ┃ ┣ 📄Step.2_Data_Analysis.qmd
- ┃ ┗ 📄Step.3_Data_Visualization.qmd
+ ┣ 📂raw_data
+ ┃ ┣ 📄accessPointLocations.txt
+ ┃ ┣ 📄offline.final.trace.txt
+ ┃ ┗ 📄online.final.trace.txt
  ┣ 📄LICENSE
- ┗ 📄README.md
+ ┣ 📄README.md
+ ┣ 📄Step.1_Data_Cleaning.qmd
+ ┗ 📄Step.2_Data_Analysis.qmd
 ```
