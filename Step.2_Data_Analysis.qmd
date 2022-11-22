@@ -1,0 +1,201 @@
+---
+title: "Indoor Positioning System"
+subtitle: "Data_Analysis"
+author: "Sang Xing"
+subtitle: "STAT 410"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-title: Contents
+    toc-depth: 4
+    toc-location: right
+    number-sections: false
+    number-depth: 3
+    anchor-sections: true
+    smooth-scroll: true
+    link-external-icon: false
+    link-external-newwindow: true
+    code-fold: true
+    code-tools: 
+      source: true
+      toggle: true
+      caption: none
+    code-overflow: scroll
+    code-summary: "Show the code"
+    highlight-style: atom-one
+    link-external-filter: '^(?:http:|https:)\/\/www\.quarto\.org\/custom'
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+---
+
+```{r include=FALSE}
+#knitr::opts_chunk$set(
+#   echo = FALSE,                 # don't show code
+#   warning = FALSE,              # don't show warnings
+#   message = FALSE,              # don't show messages (less serious warnings)
+#   cache = FALSE,                # set to TRUE to save results from last compilation
+#   fig.align = "center",         # center figures
+#   fig.width = ,                 # Adjust figure width
+#   fig.height = ,                # Adjust figure height
+#   attr.source = '.numberLines'  # add line numbers to code
+#   class.output = "numberLines"  # add line numbers to code output
+# )
+```
+
+```{css, echo=FALSE}
+h1.title, .subtitle.lead{
+  text-align: center;
+}
+
+div.quarto-title-meta{
+  display: block!important;
+  text-align: center;
+}
+```
+
+```{r include=FALSE}
+library(tidyverse)  # Load core packages: 
+                    # ggplot2,   for data visualization.
+                    # dplyr,     for data manipulation.
+                    # tidyr,     for data tidying.
+                    # purrr,     for functional programming.
+                    # tibble,    for tibbles, a modern re-imagining of data frames.
+                    # stringr,   for strings.
+                    # forcats,   for factors.
+                    # lubridate, for date/times.
+                    # readr,     for reading .csv, .tsv, and .fwf files.
+                    # readxl,    for reading .xls, and .xlxs files.
+                    # feather,   for sharing with Python and other languages.
+                    # haven,     for SPSS, SAS and Stata files.
+                    # httr,      for web apis.
+                    # jsonlite   for JSON.
+                    # rvest,     for web scraping.
+                    # xml2,      for XML.
+                    # modelr,    for modelling within a pipeline
+                    # broom,     for turning models into tidy data
+                    # hms,       for times.
+
+library(magrittr)   # Pipeline operator
+library(lobstr)     # Visualizing abstract syntax trees, stack trees, and object sizes
+library(pander)     # Exporting/converting complex pandoc documents, EX: df to Pandoc table
+library(ggforce)    # More plot functions on top of ggplot2
+library(ggpubr)     # Automatically add p-values and significance levels  plots. 
+                    # Arrange and annotate multiple plots on the same page. 
+                    # Change graphical parameters such as colors and labels.
+library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
+library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
+library(latex2exp)  # Latex axis titles in ggplot2
+library(ellipse)    # Simultaneous confidence interval region to check C.I. of 2 slope parameters
+library(plotly)     # User interactive plots
+
+set.seed(27)        # make random results reproducible
+setwd("C:/Users/sangb/Desktop/School/Classes/STAT/STAT 410/Code")
+```
+
+## Data Import
+
+```{r Step_4.Data_Import}
+# Load Data
+load("clean_data/IPS_Offline.RData")
+load("clean_data/IPS_Online.RData")
+load("clean_data/IPS_trainingData.RData")
+load("clean_data/IPS_testingData.RData")
+
+# Load Functions
+load("clean_data/Fun-Ori2Angle.Rdata")
+```
+
+## Data Analysis
+
+```{r eval=FALSE}
+# For m angles, find the closest desired orientations to the new observations
+m <- 3
+angleNewObs <- -45
+refs <- seq(0, by=45, length=8)
+nearestAngle <- Ori.to.Angle(angleNewObs)
+
+if ( m%%2 == 1) {
+  angles = seq(-45*(m-1)/2, 45*(m-1)/2, length=m)
+} else {
+  m = m + 1
+  angles = seq(-45*(m-1)/2, 45*(m-1)/2, length=m)
+  if (sign(angleNewObs - nearestAngle) > -1)
+    angles = angles[-1]
+  else
+    angles = angles[-m]
+}
+
+# Map the angles to values in refs (-45 maps to 315 and 405 maps to 45)
+angles <- angles + nearestAngle
+angles[angles < 0] <- angles [angles <0] + 360
+angles[angles > 360] <- angles[angles >360] - 360
+
+trainSubset <- IPS_trainingData[IPS_trainingData$angle %in% angles, ]
+
+# Aggregate RSSI with respect to 6 APs
+reshapeSS <- function (data, varSignal = "signal", keepVars = c("posXY", "orientation", "direction")) {
+  byLocation = with(data, by(data, list(posXY),
+                             function(x) {
+                               ans = x[1, keepVars]
+                               avgSS = tapply(x[,varSignal], x$MAC, mean)
+                               y = matrix(avgSS, nrow=1, ncol=6, dimnames = list(ans$posXY, names(avgSS)))
+                               cbind(ans, y)
+                             }))
+  newDataSS <- do.call("rbind", byLocation)
+  return(newDataSS)
+}
+
+# Summarize and reshape trainSubset
+trainSS <- reshapeSS(trainSubset, varSignal = "avgSignal")
+```
+
+```{r Step_4.Data_Analysis}
+#Aggregate RSSI with respect to 6 APs
+reshapeSS <- function (data, varSignal = "signal", keepVars = c("posXY", "orientation", "direction")) {
+  byLocation = with(data, by(data, list(posXY),
+                             function(x) {
+                               ans = x[1, keepVars]
+                               avgSS = tapply(x[,varSignal], x$MAC, mean)
+                               y = matrix(avgSS, nrow=1, ncol=6, dimnames = list(ans$posXY, names(avgSS)))
+                               cbind(ans, y)
+                             }))
+  newDataSS <- do.call("rbind", byLocation)
+  return(newDataSS)
+}
+
+selectTrain <- function(angle.newObs, data, m){
+  # m is the number of angles to keep between 1 and 5
+  refs = seq(0, by = 45, length  = 8)
+  nearestAngle = Ori.to.Angle(angle.newObs)
+  
+  if (m %% 2 == 1) 
+    angles = seq(-45 * (m - 1) /2, 45 * (m - 1) /2, length = m)
+  else {
+    m = m + 1
+    angles = seq(-45 * (m - 1) /2, 45 * (m - 1) /2, length = m)
+    if (sign(angle.newObs - nearestAngle) > -1) 
+      angles = angles[ -1 ]
+    else 
+      angles = angles[ -m ]
+  }
+  angles = angles + nearestAngle
+  angles[angles < 0] = angles[ angles < 0 ] + 360
+  angles[angles > 360] = angles[ angles > 360 ] - 360
+  angles = sort(angles) 
+  
+  trainSubset = data[ data$angle %in% angles, ]
+  reshapeSS(trainSubset, varSignal = "avgSignal")
+}
+
+# Test function with new obs angle 130
+train.at.angle <- selectTrain(angle.newObs=130, data=IPS_trainingData, m=3)
+# length(train130[[1]])
+# [1] 166 #Indeed we have 166 locations recorded
+```
+
