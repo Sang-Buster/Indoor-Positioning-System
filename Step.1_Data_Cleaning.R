@@ -2,12 +2,12 @@
 #------------------Step 0: Load Libraries -----------------#
 #----------------------------------------------------------#
 
-library(tidyverse)  # Load core packages:
+library(tidyverse)  # Load core packages: 
 # ggplot2,   for data visualization.
 # dplyr,     for data manipulation.
 # tidyr,     for data tidying.
 # purrr,     for functional programming.
-# tibble,    for tibbles, a typern re-imagining of data frames.
+# tibble,    for tibbles, a modern re-imagining of data frames.
 # stringr,   for strings.
 # forcats,   for factors.
 # lubridate, for date/times.
@@ -19,16 +19,16 @@ library(tidyverse)  # Load core packages:
 # jsonlite   for JSON.
 # rvest,     for web scraping.
 # xml2,      for XML.
-# typelr,    for typelling within a pipeline
-# broom,     for turning typels into tidy data
+# modelr,    for modelling within a pipeline
+# broom,     for turning models into tidy data
 # hms,       for times.
 
 library(magrittr)   # Pipeline operator
 library(lobstr)     # Visualizing abstract syntax trees, stack trees, and object sizes
 library(pander)     # Exporting/converting complex pandoc documents, EX: df to Pandoc table
 library(ggforce)    # More plot functions on top of ggplot2
-library(ggpubr)     # Automatically add p-values and significance levels  plots.
-# Arrange and annotate multiple plots on the same page.
+library(ggpubr)     # Automatically add p-values and significance levels  plots. 
+# Arrange and annotate multiple plots on the same page. 
 # Change graphical parameters such as colors and labels.
 library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
 library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
@@ -38,21 +38,22 @@ library(plotly)     # User interactive plots
 
 set.seed(27)        # make random results reproducible
 
-# WD <- getwd()       # pwd
-# setwd(WD)           # cd WD
-# remove(WD)          # del WD
+WD <- getwd()
+setwd(WD)
+remove(WD)
 
 #--------------------------------------------------------#
-#------------------Step 1: Data Cleaning-----------------#
+#-----------------Step 1: Data Cleaning------------------#
 #--------------------------------------------------------#
 
 # Load txt files
 offline_data_txt <- readLines("raw_data/offline.final.trace.txt")
 online_data_txt  <- readLines("raw_data/online.final.trace.txt")
+AP_Loc           <- read.table("raw_data/accessPointLocations.txt", header=T)
 
 # To split the text into rows, then piece together column names and rows of data
 processLine <- function(x) {
-  #Regex to split data on ;=, characters (determined by looking at data)
+  #Use Regex to split data on ;=, characters (determined by looking at data)
   tokens = strsplit(x, "[;=,]")[[1]]
   #If no signals are recorded (token length is 10) then remove the row
   if (length(tokens) == 10)
@@ -73,42 +74,39 @@ IPS_offline_Data <- as.data.frame(do.call("rbind", offline_tmp), stringsAsFactor
 IPS_online_Data  <- as.data.frame(do.call("rbind", online_tmp), stringsAsFactors=F)
 
 # Add column names
-names(IPS_offline_Data) <- c("timestamp", "scanedMAC", "posX", "posY", "posZ", "orientation", "MAC", "RSSI", "frequency", "type")
-names(IPS_online_Data) <- c("timestamp", "scanedMAC", "posX", "posY", "posZ", "orientation", "MAC", "RSSI", "frequency", "type")
+names(IPS_offline_Data) <- c("timeStamp", "scanedMAC", "posX", "posY", "posZ", "orientation", "MAC", "RSSI", "frequency", "type")
+names(IPS_online_Data) <- c("timeStamp", "scanedMAC", "posX", "posY", "posZ", "orientation", "MAC", "RSSI", "frequency", "type")
 
 #--------------------------------------------------------#
 #----------------Step 2: Data Adjustment-----------------#
 #--------------------------------------------------------#
 
+# Take only access point = 3, device in Ad-hoc mode = 1
+IPS_offline_Data <- IPS_offline_Data %>% filter(type=='3')
+IPS_offline_Data$type <- NULL
+IPS_online_Data <- IPS_online_Data %>% filter(type=='3')
+IPS_online_Data$type <- NULL
+
+#keep the top 7 Macs with over 10k obs
+goodMacs <- names(sort(table(IPS_offline_Data$MAC), decreasing=T))[1:7]
+IPS_offline_Data <- IPS_offline_Data[IPS_offline_Data$MAC %in% goodMacs,]
+
 # Data coercion chr -> numeric
-varList <- c("timestamp", "posX", "posY", "posZ", "orientation", "RSSI")
+varList <- c("timeStamp", "posX", "posY", "posZ", "orientation", "RSSI")
 IPS_offline_Data[varList] <- lapply(IPS_offline_Data[varList], as.numeric)
 IPS_online_Data[varList] <- lapply(IPS_online_Data[varList], as.numeric)
 
-# Removing the - in RSSI
-IPS_offline_Data$RSSI <- as.numeric(gsub("\\-","",IPS_offline_Data$RSSI))
-IPS_online_Data$RSSI <- as.numeric(gsub("\\-","",IPS_online_Data$RSSI))
+# Convert timeStamp to millisecond for Unix time conversions
+IPS_offline_Data$timeStamp <- IPS_offline_Data$timeStamp/1000 
+IPS_offline_Data$timeStamp <- as.POSIXct(IPS_offline_Data$time, tz="UTC", origin = "1970-01-01")
 
-# Convert timestamp to millisecond for Unix time conversions
-IPS_offline_Data$timestamp <- IPS_offline_Data$timestamp/1000
-IPS_offline_Data$timestamp <- as.POSIXct(IPS_offline_Data$time, tz="UTC", origin = "1970-01-01")
+IPS_online_Data$timeStamp <- IPS_online_Data$timeStamp/1000 
+IPS_online_Data$timeStamp <- as.POSIXct(IPS_online_Data$time, tz="UTC", origin = "1970-01-01")
 
-IPS_online_Data$timestamp <- IPS_online_Data$timestamp/1000
-IPS_online_Data$timestamp <- as.POSIXct(IPS_online_Data$time, tz="UTC", origin = "1970-01-01")
-
-# summary(sapply(IPS_offline_Data[,c("scanedMAC", "frequency", "MAC", "type")], as.factor))
-# summary(sapply(IPS_online_Data[,c("scanedMAC", "frequency", "MAC", "type")], as.factor))
-
-#Since the scan device and the elevation (posZ) are constant, they can be dropped
-length(unique(IPS_offline_Data$scanedMAC))  #Output: 1
-length(unique(IPS_offline_Data$posZ))       #Output: 1
-IPS_offline_Data$scanMAC <- NULL
-IPS_offline_Data$posZ <- NULL
-
-length(unique(IPS_online_Data$scanedMAC))   #Output: 1
-length(unique(IPS_online_Data$posZ))        #Output: 1
-IPS_online_Data$scanMAC <- NULL
-IPS_online_Data$posZ <- NULL
+# length(unique(IPS_offline_Data$scanedMAC))  #Output: 1
+# length(unique(IPS_offline_Data$posZ))       #Output: 1
+# length(unique(IPS_online_Data$scanedMAC))   #Output: 1
+# length(unique(IPS_online_Data$posZ))        #Output: 1
 
 #Since the scanedMAC and posZ are constant, they can be dropped
 IPS_offline_Data$scanedMAC <- NULL
@@ -118,43 +116,43 @@ IPS_offline_Data$posZ <- NULL
 IPS_online_Data$scanedMAC <- NULL
 IPS_online_Data$posZ <- NULL
 
-# Orientation -> Angle #
+
+# Orientation -> Angle # 
 Ori.to.Angle <- function(angles) {
   refs = seq(0, by=45, length=9)
-  q = sapply(angles, function(o) which.min(abs(o-refs)))
+  q = sapply(angles, 
+             function(o){
+               if(o>0){
+                 which.min(abs(o-refs))
+               }else{
+                 which.min(abs(o+360-refs))
+               }})
   c(refs[1:8], 0)[q]
 }
-# Orientation -> Direction
+
+# Orientation -> Direction 
 Ori.to.Direction <- function(orientation) {
-  angles = seq(from=0, to=360, by=45)
-  q = sapply(orientation, function(index) which.min(abs(index-angles)))
+  angles = seq(from=0, to=360, by=45) 
+  q = sapply(orientation, 
+             function(o){
+               if(o>0){
+                 which.min(abs(o-angles))
+               }else{
+                 which.min(abs(o+360-angles))
+               }})
   directions_index <- c(1:8, 1)[q]
-  directions = c("E→", "NE↗", "N↑", "NW↖", "W←", "SW↙", "S↓", "SE↘")
-  directions[directions_index]
+  directions = c("E→", "NE↗", "N↑", "NW↖", "W←", "SW↙", "S↓", "SE↘") 
+  directions[directions_index] 
 }
 
 # Apply function from above to orientation data
-IPS_offline_Data$angle <- Ori.to.Angle(IPS_offline_Data$orientation)
-IPS_online_Data$angle <- Ori.to.Angle(IPS_online_Data$orientation)
+IPS_offline_Data$angle <- Ori.to.Angle(IPS_offline_Data$orientation) 
+IPS_online_Data$angle <- Ori.to.Angle(IPS_online_Data$orientation) 
 
-IPS_offline_Data$direction <- Ori.to.Direction(IPS_offline_Data$orientation)
-IPS_online_Data$direction <- Ori.to.Direction(IPS_online_Data$orientation)
-
-#Clear unneeded objects
-remove(offlines)
-remove(onlines)
-remove(offline_data_txt)
-remove(online_data_txt)
-
-# Inspecting the length or amount of records in the dataframe
-summary(IPS_offline_Data) # note that the length is 1,181,628 records
-
-# Inspecting the length or amount of records in the dataframe
-summary(IPS_online_Data) # note that the length is 53,303 records
-
+IPS_offline_Data$direction <- Ori.to.Direction(IPS_offline_Data$orientation) 
+IPS_online_Data$direction <- Ori.to.Direction(IPS_online_Data$orientation) 
 
 # Number of MAC addreses = number of frequency channels, should be 6 MAC for 6 WAP, with 6 Freq
-AP_Loc <- read.table("raw_data/accessPointLocations.txt", header=T)
 IPS_offline_Data <- IPS_offline_Data[IPS_offline_Data$MAC %in% AP_Loc$Macs,]
 IPS_online_Data <- IPS_online_Data[IPS_online_Data$MAC %in% AP_Loc$Macs,]
 
@@ -162,45 +160,84 @@ IPS_online_Data <- IPS_online_Data[IPS_online_Data$MAC %in% AP_Loc$Macs,]
 IPS_offline_Data$frequency <- NULL
 IPS_online_Data$frequency <- NULL
 
-summary(IPS_offline_Data)
+# Paste all combos of x and y
+IPS_offline_Data$posXY <- paste(IPS_offline_Data$posX, IPS_offline_Data$posY, sep=", ") 
+IPS_online_Data$posXY <- paste(IPS_online_Data$posX, IPS_online_Data$posY, sep=", ") 
 
-# Adding (x,y) access point coordinates to Offline
-IPS_offline_Data <- mutate(IPS_offline_Data, ap_x = ifelse(MAC %in% "00:0f:a3:39:e1:c0", 7.5,
-                                                           ifelse(MAC %in% "00:14:bf:b1:97:8a", 2.5,
-                                                                  ifelse(MAC %in% "00:14:bf:3b:c7:c6", 12.8,
-                                                                         ifelse(MAC %in% "00:14:bf:b1:97:90", 1.0,
-                                                                                ifelse(MAC %in% "00:14:bf:b1:97:8d", 33.5,
-                                                                                       ifelse(MAC %in% "00:14:bf:b1:97:81", 33.5, NA))))))) %>%
-  mutate(IPS_offline_Data, ap_y = ifelse(MAC %in% "00:0f:a3:39:e1:c0", 6.3,
-                                         ifelse(MAC %in% "00:14:bf:b1:97:8a", -0.8,
-                                                ifelse(MAC %in% "00:14:bf:3b:c7:c6", -2.8,
-                                                       ifelse(MAC %in% "00:14:bf:b1:97:90", 14.0,
-                                                              ifelse(MAC %in% "00:14:bf:b1:97:8d", 9.3,
-                                                                     ifelse(MAC %in% "00:14:bf:b1:97:81", 2.8, NA))))))) %>%
-  # Creates new variables to apply Pythagorean theorem to plot radius
-  mutate(IPS_offline_Data, a = (abs(posX-ap_x))) %>%  # creates distance between x coordinates
-  mutate(IPS_offline_Data, b = (abs(posY-ap_y))) %>% # creates distance between y coordinates
-  mutate(IPS_offline_Data, dist = (sqrt(a^2+b^2))) %>%  # finds distance between (x,y) points
-  select(-c(a,b)) #removing a & b variables
-# summary(IPS_offline_Data)
-# Adding (x,y) access point coordinates to online
-IPS_online_Data <- mutate(IPS_online_Data, ap_x = ifelse(MAC %in% "00:0f:a3:39:e1:c0", 7.5,
-                                                         ifelse(MAC %in% "00:14:bf:b1:97:8a", 2.5,
-                                                                ifelse(MAC %in% "00:14:bf:3b:c7:c6", 12.8,
-                                                                       ifelse(MAC %in% "00:14:bf:b1:97:90", 1.0,
-                                                                              ifelse(MAC %in% "00:14:bf:b1:97:8d", 33.5,
-                                                                                     ifelse(MAC %in% "00:14:bf:b1:97:81", 33.5, NA))))))) %>%
-  mutate(IPS_online_Data, ap_y = ifelse(MAC %in% "00:0f:a3:39:e1:c0", 6.3,
-                                        ifelse(MAC %in% "00:14:bf:b1:97:8a", -0.8,
-                                               ifelse(MAC %in% "00:14:bf:3b:c7:c6", -2.8,
-                                                      ifelse(MAC %in% "00:14:bf:b1:97:90", 14.0,
-                                                             ifelse(MAC %in% "00:14:bf:b1:97:8d", 9.3,
-                                                                    ifelse(MAC %in% "00:14:bf:b1:97:81", 2.8, NA))))))) %>%
-  # Creates new variables to apply Pythagorean theorem to plot radius
-  mutate(IPS_online_Data, a = (abs(posX-ap_x))) %>%  # creates distance between x coordinates
-  mutate(IPS_online_Data, b = (abs(posY-ap_y))) %>% # creates distance between y coordinates
-  mutate(IPS_online_Data, dist = (sqrt(a^2+b^2))) %>%  # finds distance between (x,y) points
-  select(-c(a,b)) #removing a & b variables
+# Clear unneeded objects
+remove(offlines)
+remove(onlines)
+remove(offline_tmp)
+remove(online_tmp)
+remove(offline_data_txt)
+remove(online_data_txt)
+remove(varList)
+remove(goodMacs)
+
+
+#-----------------------------------------------------------#
+#------------------- Find Training Data Set ----------------#
+#-----------------------------------------------------------#  
+
+# Create a list of dfs for every combo of posXY, angle, and AP
+Offline_RSSI.statCompute <- with(IPS_offline_Data, by(IPS_offline_Data, list(posXY, angle, MAC), function(x) x))
+
+# Get signal stats on each df
+offline.signalStat <- lapply(Offline_RSSI.statCompute,
+                             function (oneLoc.Angle.AP) {
+                               stats = oneLoc.Angle.AP[1, ]
+                               stats$medSignal = median(oneLoc.Angle.AP$RSSI)
+                               stats$avgSignal = mean(oneLoc.Angle.AP$RSSI)
+                               stats$num = length(oneLoc.Angle.AP$RSSI)
+                               stats$sdSignal = sd(oneLoc.Angle.AP$RSSI)
+                               stats$iqrSignal = IQR(oneLoc.Angle.AP$RSSI)
+                               stats
+                             })
+
+IPS_trainingData <- do.call("rbind", offline.signalStat)
+
+# Left join apX and apY
+AP_Loc <- AP_Loc %>% rename(MAC=Macs)
+
+IPS_trainingData <- left_join(IPS_trainingData, AP_Loc, by="MAC") 
+IPS_trainingData <- IPS_trainingData %>% rename(apX=x, apY=y)
+
+# Calculate Euclidean distances from the device to APs
+diffs <- IPS_trainingData[ , c("posX", "posY")] - IPS_trainingData[ , c("apX", "apY")]
+IPS_trainingData$dist <- sqrt(diffs[,1]^2 + diffs[,2]^2)
+
+# Clear unneeded objects
+remove(Offline_RSSI.statCompute)
+remove(offline.signalStat)
+remove(diffs)
+
+#----------------------------------------------------------#
+#------------------- Find Testing Data Set ----------------#
+#----------------------------------------------------------#  
+
+# Creates a 6 columns of signal strengths with respect to each APs
+keepVars <- c("posX", "posY", "posXY", "orientation", "angle", "direction")
+online_RSSI.statCompute <- with(IPS_online_Data,
+                                by(IPS_online_Data, list(posXY),
+                                   function(x) {
+                                     stats = x[1, keepVars]
+                                     avgSS = tapply(x$RSSI, x$MAC, mean)
+                                     y = matrix(avgSS, nrow=1, ncol=6,
+                                                dimnames = list(stats$posXY, names(avgSS)))
+                                     cbind(stats, y)
+                                   }))
+IPS_testingData <- do.call("rbind", online_RSSI.statCompute)
+
+# Clear unneeded objects
+remove(online_RSSI.statCompute)
+remove(keepVars)
+
+#  length(unique(IPS_online_Data$posXY))
+# [1] 60
+#  length(unique(IPS_offline_Data$posXY))
+# [1] 166
+# In deed, we have 60 locations and 166 locations observed in offline and online data sets.
+
 
 #--------------------------------------------------------#
 #------------------Step 3: Data Saving-------------------#
@@ -210,7 +247,3 @@ save(IPS_offline_Data, file = "IPS_offline.RData")
 save(IPS_trainingData, file = "IPS_trainingData.RData")
 save(IPS_online_Data, file = "IPS_online.RData")
 save(IPS_testingData, file = "IPS_testingData.RData")
-
-# uncomment for csv output
-# write_csv(IPS_offline_Data, file = "IPS_Offline.csv")
-# write_csv(IPS_online_Data, file = "IPS_Online.csv")
