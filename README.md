@@ -28,13 +28,6 @@
 </a>
 </p>
 
-**Objective**:
-- [x] 1. Data Cleaning 
-- [ ] 2. Data Analysis (🛠️ in progress...)
-- [ ] 3. Data Visualizations 
-- [ ] 4. Presentation 
-- [ ] 5. Report
-
 <p align="right">
 <a href="https://github.com/cyrus-pdx/Indoor_positioning_system/tree/SingSong" target="_blank">
 <img src="https://img.shields.io/github/last-commit/Sang-Buster/Indoor-Positioning-System" />
