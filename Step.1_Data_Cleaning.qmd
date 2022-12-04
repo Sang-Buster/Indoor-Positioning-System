@@ -308,7 +308,8 @@ In deed, we have 60 locations and 166 locations observed in offline and online d
 ```{r Step_3.Data_Saving}
 save(IPS_offline_Data, file = "clean_data/IPS_offline.RData")
 save(IPS_trainingData, file = "clean_data/IPS_trainingData.RData")
-save(IPS_online_Data, file = "clean_data/IPS_online.RData")
-save(IPS_testingData, file = "clean_data/IPS_testingData.RData")
-save(IPS_testingData, file = "clean_data/IPS_AP_Locations.RData")
+save(IPS_online_Data,  file = "clean_data/IPS_online.RData")
+save(IPS_testingData,  file = "clean_data/IPS_testingData.RData")
+save(AP_Loc,           file = "clean_data/IPS_AP_Locations.RData")
+save(Ori.to.Angle,     file = "clean_data/Fun-Ori2Angle.RData")
 ```

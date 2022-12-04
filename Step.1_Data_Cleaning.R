@@ -3,33 +3,33 @@
 #----------------------------------------------------------#
 
 library(tidyverse)  # Load core packages: 
-# ggplot2,   for data visualization.
-# dplyr,     for data manipulation.
-# tidyr,     for data tidying.
-# purrr,     for functional programming.
-# tibble,    for tibbles, a modern re-imagining of data frames.
-# stringr,   for strings.
-# forcats,   for factors.
-# lubridate, for date/times.
-# readr,     for reading .csv, .tsv, and .fwf files.
-# readxl,    for reading .xls, and .xlxs files.
-# feather,   for sharing with Python and other languages.
-# haven,     for SPSS, SAS and Stata files.
-# httr,      for web apis.
-# jsonlite   for JSON.
-# rvest,     for web scraping.
-# xml2,      for XML.
-# modelr,    for modelling within a pipeline
-# broom,     for turning models into tidy data
-# hms,       for times.
+                    # ggplot2,   for data visualization.
+                    # dplyr,     for data manipulation.
+                    # tidyr,     for data tidying.
+                    # purrr,     for functional programming.
+                    # tibble,    for tibbles, a modern re-imagining of data frames.
+                    # stringr,   for strings.
+                    # forcats,   for factors.
+                    # lubridate, for date/times.
+                    # readr,     for reading .csv, .tsv, and .fwf files.
+                    # readxl,    for reading .xls, and .xlxs files.
+                    # feather,   for sharing with Python and other languages.
+                    # haven,     for SPSS, SAS and Stata files.
+                    # httr,      for web apis.
+                    # jsonlite   for JSON.
+                    # rvest,     for web scraping.
+                    # xml2,      for XML.
+                    # modelr,    for modelling within a pipeline
+                    # broom,     for turning models into tidy data
+                    # hms,       for times.
 
 library(magrittr)   # Pipeline operator
 library(lobstr)     # Visualizing abstract syntax trees, stack trees, and object sizes
 library(pander)     # Exporting/converting complex pandoc documents, EX: df to Pandoc table
 library(ggforce)    # More plot functions on top of ggplot2
 library(ggpubr)     # Automatically add p-values and significance levels  plots. 
-# Arrange and annotate multiple plots on the same page. 
-# Change graphical parameters such as colors and labels.
+                    # Arrange and annotate multiple plots on the same page. 
+                    # Change graphical parameters such as colors and labels.
 library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
 library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
 library(latex2exp)  # Latex axis titles in ggplot2
@@ -214,7 +214,7 @@ remove(diffs)
 #----------------------------------------------------------#
 #------------------- Find Testing Data Set ----------------#
 #----------------------------------------------------------#  
-
+  
 # Creates a 6 columns of signal strengths with respect to each APs
 keepVars <- c("posX", "posY", "posXY", "orientation", "angle", "direction")
 online_RSSI.statCompute <- with(IPS_online_Data,
@@ -245,5 +245,7 @@ remove(keepVars)
 
 save(IPS_offline_Data, file = "IPS_offline.RData")
 save(IPS_trainingData, file = "IPS_trainingData.RData")
-save(IPS_online_Data, file = "IPS_online.RData")
-save(IPS_testingData, file = "IPS_testingData.RData")
+save(IPS_online_Data,  file = "IPS_online.RData")
+save(IPS_testingData,  file = "IPS_testingData.RData")
+save(AP_Loc,           file = "clean_data/IPS_AP_Locations.RData")
+save(Ori.to.Angle,     file = "clean_data/Fun-Ori2Angle.RData")
