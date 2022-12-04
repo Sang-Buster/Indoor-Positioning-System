@@ -1,93 +1,35 @@
----
-title: "Indoor Positioning System"
-subtitle: "Data_Analysis"
-author: "Sang Xing"
-subtitle: "STAT 410"
-format: 
-  html:
-    fig-width: 8
-    fig-height: 4
-    theme:
-      dark: darkly
-      light: flatly
-    toc: true
-    toc-title: Contents
-    toc-depth: 4
-    toc-location: right
-    number-sections: false
-    number-depth: 3
-    anchor-sections: true
-    smooth-scroll: true
-    link-external-icon: false
-    link-external-newwindow: true
-    code-fold: true
-    code-tools: 
-      source: true
-      toggle: true
-      caption: none
-    code-overflow: scroll
-    code-summary: "Show the code"
-    highlight-style: atom-one
-    link-external-filter: '^(?:http:|https:)\/\/www\.quarto\.org\/custom'
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
----
+#----------------------------------------------------------#
+#------------------Step 4: Data Analysis ------------------#
+#----------------------------------------------------------#
 
-```{r include=FALSE}
-#knitr::opts_chunk$set(
-#   echo = FALSE,                 # don't show code
-#   warning = FALSE,              # don't show warnings
-#   message = FALSE,              # don't show messages (less serious warnings)
-#   cache = FALSE,                # set to TRUE to save results from last compilation
-#   fig.align = "center",         # center figures
-#   fig.width = ,                 # Adjust figure width
-#   fig.height = ,                # Adjust figure height
-#   attr.source = '.numberLines'  # add line numbers to code
-#   class.output = "numberLines"  # add line numbers to code output
-# )
-```
-
-```{css, echo=FALSE}
-h1.title, .subtitle.lead{
-  text-align: center;
-}
-
-div.quarto-title-meta{
-  display: block!important;
-  text-align: center;
-}
-```
-
-```{r include=FALSE}
 library(tidyverse)  # Load core packages: 
-                    # ggplot2,   for data visualization.
-                    # dplyr,     for data manipulation.
-                    # tidyr,     for data tidying.
-                    # purrr,     for functional programming.
-                    # tibble,    for tibbles, a modern re-imagining of data frames.
-                    # stringr,   for strings.
-                    # forcats,   for factors.
-                    # lubridate, for date/times.
-                    # readr,     for reading .csv, .tsv, and .fwf files.
-                    # readxl,    for reading .xls, and .xlxs files.
-                    # feather,   for sharing with Python and other languages.
-                    # haven,     for SPSS, SAS and Stata files.
-                    # httr,      for web apis.
-                    # jsonlite   for JSON.
-                    # rvest,     for web scraping.
-                    # xml2,      for XML.
-                    # modelr,    for modelling within a pipeline
-                    # broom,     for turning models into tidy data
-                    # hms,       for times.
+# ggplot2,   for data visualization.
+# dplyr,     for data manipulation.
+# tidyr,     for data tidying.
+# purrr,     for functional programming.
+# tibble,    for tibbles, a modern re-imagining of data frames.
+# stringr,   for strings.
+# forcats,   for factors.
+# lubridate, for date/times.
+# readr,     for reading .csv, .tsv, and .fwf files.
+# readxl,    for reading .xls, and .xlxs files.
+# feather,   for sharing with Python and other languages.
+# haven,     for SPSS, SAS and Stata files.
+# httr,      for web apis.
+# jsonlite   for JSON.
+# rvest,     for web scraping.
+# xml2,      for XML.
+# modelr,    for modelling within a pipeline
+# broom,     for turning models into tidy data
+# hms,       for times.
 
 library(magrittr)   # Pipeline operator
 library(lobstr)     # Visualizing abstract syntax trees, stack trees, and object sizes
 library(pander)     # Exporting/converting complex pandoc documents, EX: df to Pandoc table
 library(ggforce)    # More plot functions on top of ggplot2
 library(ggpubr)     # Automatically add p-values and significance levels  plots. 
-                    # Arrange and annotate multiple plots on the same page. 
-                    # Change graphical parameters such as colors and labels.
+# Arrange and annotate multiple plots on the same page. 
+# Change graphical parameters such as colors and labels.
 library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
 library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
 library(latex2exp)  # Latex axis titles in ggplot2
@@ -95,13 +37,13 @@ library(ellipse)    # Simultaneous confidence interval region to check C.I. of 2
 library(plotly)     # User interactive plots
 
 set.seed(27)        # make random results reproducible
-setwd("C:/Users/sangb/Desktop/School/Classes/STAT/STAT 410/Code")
-```
+
+WD <- getwd()
+setwd(WD)
+remove(WD)
 
 ## Data Import
 
-```{r Step_4.Data_Import}
-# Load Data
 load("clean_data/IPS_Offline.RData")
 load("clean_data/IPS_Online.RData")
 load("clean_data/IPS_trainingData.RData")
@@ -110,12 +52,11 @@ load("clean_data/IPS_AP_Locations.RData")
 
 # Load Functions
 load("clean_data/Fun-Ori2Angle.Rdata")
-```
+
 
 ## Data Analysis
 
 ### Selected TrainSS Example
-```{r eval=FALSE}
 # For m angles, find the closest desired orientations to the new observations
 m <- 3
 angleNewObs <- -45
@@ -155,10 +96,9 @@ reshapeSS <- function (data, varSignal = "signal", keepVars = c("posXY", "orient
 
 # Summarize and reshape trainSubset
 trainSS <- reshapeSS(trainSubset, varSignal = "avgSignal")
-```
+
 
 ### Function for Selected TrainSS 
-```{r Step_4.Data_Analysis}
 #Aggregate RSSI with respect to 6 APs
 reshapeSS <- function (data, varSignal = "signal", keepVars = c("posXY", "posX", "posY")) {
   byLocation = with(data, by(data, list(posXY),
@@ -200,10 +140,8 @@ selectTrain <- function(angle.newObs, data, m){
 train.at.angle <- selectTrain(angle.newObs=130, data=IPS_trainingData, m=3)
 # length(train130[[1]])
 # [1] 166 #Indeed we have 166 locations recorded
-```
 
 ### KNN Estimation Example
-```{r}
 #Build function findNN that finds the k nearest neighbors from any point
 #Parameters are a numeric vector of 6 new signal strengths and the return value from selectTrain()
 
@@ -257,10 +195,9 @@ calcError <- function(estXY, actualXY) {
 }
 actualXY <- IPS_testingData[ , c("posX", "posY")]
 sapply(list(estXYk1, estXYk3, estXYk5), calcError, actualXY)
-```
+
 
 ### Find Optimal k
-```{r}
 #Use k-fold cross validation to find optimal k for KNN
 
 #Perform k-fold cross validation with k=11 so each fold has 15 locations randomly selected
@@ -309,10 +246,9 @@ estFold <- predXY(newSignals = testFold[ , 7:12],
 
 actualFold <- testFold[ , c("posX", "posY")]
 calcError(estFold, actualFold)
-```
+
 
 ### Function for k-Fold CV
-```{r}
 #Wrap the code above into loops over the folds and number of neighbors for K=20
 K <- 30
 err <- rep(0, K)
@@ -361,10 +297,11 @@ estXYk5 <- predXY(newSignals = testSummary[ , 6:11],
 calcError(estXYk5, actualXY)
 
 #Notice that number of angles is not optimized through cross validation, but it could be for a better model
-```
 
-## Data Visualization
-```{r}
+#--------------------------------------------------------------#
+#--------------------Step 5: Data Visualization ---------------#
+#--------------------------------------------------------------#
+
 floorErrorMap <- function(estXY, actualXY, trainPoints = NULL, AP = NULL){
   
   plot(0, 0, xlim = c(0, 35), ylim = c(-3, 15), type = "n",
@@ -432,17 +369,17 @@ floorErrorMap <- function(estXY, actualXY, trainPoints = NULL, AP = NULL){
   segments(33.8,-3.4, 33.8,14.2,
            lwd = 1, col = "black")
   polygon(x = c(3, 3, 7.9, 7.9),  
-        y = c(4, 6.4, 6.4, 4),    
-        border = "black",             
-        lwd = 1)                   
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
   polygon(x = c(14, 14, 19.9, 19.9),  
-        y = c(4, 6.4, 6.4, 4),    
-        border = "black",             
-        lwd = 1)                   
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
   polygon(x = c(27, 27, 31, 31),  
-        y = c(4, 6.4, 6.4, 4),    
-        border = "black",             
-        lwd = 1)                   
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
   segments(-0.5,-1.2, -0.5,14.2,
            lwd = 1, col = "black")
   segments(-0.5,-1.2, 3, -1.2,
@@ -457,7 +394,7 @@ floorErrorMap(estXYk3, IPS_testingData[ , c("posX","posY")],
 
 
 trainPoints <- IPS_trainingData[IPS_trainingData$angle == 0 & 
-                                IPS_trainingData$MAC == "00:0f:a3:39:e1:c0", c("posX", "posY")]
+                                  IPS_trainingData$MAC == "00:0f:a3:39:e1:c0", c("posX", "posY")]
 
 pdf(file="Plot-K1FloorPlan.pdf", width = 10, height = 7)
 oldPar <- par(mar = c(1, 1, 1, 1))
@@ -479,4 +416,4 @@ floorErrorMap(estXYk5, IPS_testingData[ , c("posX","posY")],
               trainPoints = trainPoints, AP = AP_Loc[2:3])
 par(oldPar)
 dev.off()
-```
+

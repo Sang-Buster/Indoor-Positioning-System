@@ -278,7 +278,7 @@ remove(diffs)
 
 ```{r}
 # Creates a 6 columns of signal strengths with respect to each APs
-keepVars <- c("posXY", "orientation", "angle", "direction")
+keepVars <- c("posX", "posY", "posXY", "orientation", "angle", "direction")
 online_RSSI.statCompute <- with(IPS_online_Data,
                                 by(IPS_online_Data, list(posXY),
                                    function(x) {
@@ -306,8 +306,9 @@ In deed, we have 60 locations and 166 locations observed in offline and online d
 ## Data Saving
 
 ```{r Step_3.Data_Saving}
-save(IPS_offline_Data, file = "IPS_offline.RData")
-save(IPS_trainingData, file = "IPS_trainingData.RData")
-save(IPS_online_Data, file = "IPS_online.RData")
-save(IPS_testingData, file = "IPS_testingData.RData")
+save(IPS_offline_Data, file = "clean_data/IPS_offline.RData")
+save(IPS_trainingData, file = "clean_data/IPS_trainingData.RData")
+save(IPS_online_Data, file = "clean_data/IPS_online.RData")
+save(IPS_testingData, file = "clean_data/IPS_testingData.RData")
+save(IPS_testingData, file = "clean_data/IPS_AP_Locations.RData")
 ```
