@@ -3,8 +3,13 @@
 ```
 📦Indoor_positioning_system
  ┣ 📂clean_data
+ ┃ ┣ 📄Fun-findNN.RData
+ ┃ ┣ 📄Fun-floorErrorMap.RData
  ┃ ┣ 📄Fun-Ori2Angle.Rdata
- ┃ ┣ 📄Fun-Ori2Direction.Rdata
+ ┃ ┣ 📄Fun-predXY.RData
+ ┃ ┣ 📄Fun-reshapeSS.RData
+ ┃ ┣ 📄Fun-selectTrain.RData
+ ┃ ┣ 📄IPS_AP_Locations.RData
  ┃ ┣ 📄IPS_offline.RData
  ┃ ┣ 📄IPS_online.RData
  ┃ ┣ 📄IPS_testingData.RData
@@ -20,7 +25,11 @@
  ┣ 📄LICENSE
  ┣ 📄README.md
  ┣ 📄Step.1_Data_Cleaning.qmd
- ┗ 📄Step.2_Data_Analysis.qmd
+ ┣ 📄Step.1_Data_Cleaning.R
+ ┣ 📄Step.2_Data_Analysis.qmd
+ ┣ 📄Step.2_Data_Analysis.R
+ ┣ 📄Step.3_Data_Visualization.qmd
+ ┗ 📄Step.3_Data_Visualization.R
 ```
 <p align="right">
 <a href="https://github.com/cyrus-pdx/Indoor_positioning_system/tree/SingSong" target="_blank">
