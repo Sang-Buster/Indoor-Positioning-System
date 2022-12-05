@@ -170,3 +170,100 @@ floorErrorMap(estXYk5, IPS_testingData[ , c("posX","posY")],
 par(oldPar)
 dev.off()
 
+#------------------------------------------------------------------#
+#------------------------Step 7: RSSI Heat Map---------------------#
+#------------------------------------------------------------------#
+
+#View signal strength by location (pick an angle, say 0 degrees, and view a topographic heat map of signal strength)
+oneAPAngle <- subset(IPS_trainingData, MAC==AP_Loc[1, 1] & angle == 0)
+
+smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
+#Predict the value for a fitted surface at a grid of observed positions
+vizSmooth <- predictSurface(smoothSS)
+#Plot the predicted signal trength
+plot.surface(vizSmooth, type = "C")
+#Add locations where the measurements were taken
+points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
+points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
+points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
+
+#Wrap all this into a function so that you can draw heat map for any angle and Mac address
+surfaceSS <- function(d, m, a) {
+  oneAPAngle = subset(d, MAC == AP_Loc[1, m] & angle == a)
+  smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
+  vizSmooth <- predictSurface(smoothSS)
+  plot.surface(vizSmooth, type = "C")
+  points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
+  points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
+  points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
+}
+
+#Tell R to plot matrix
+parCur <- par(mfrow=c(2,2), mar=rep(2,4))
+#Call surfaceSS 4 times to draw 4 heatmaps
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=0)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=45)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=90)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=135)
+#Reset plotting parameters for future plots
+par(parCur)
+
+parCur <- par(mfrow=c(2,2), mar=rep(2,4))
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=180)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=225)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=270)
+mapply(surfaceSS, 
+       d=list(data=IPS_trainingData), 
+       m =1, 
+       a=315)
+par(parCur)
+
+
+## Using Plotly Heat Map
+fig <- plot_ly(data = IPS_trainingData, 
+               x = ~posX, y = ~posY, 
+               type = 'scatter', 
+               mode = 'markers', 
+               symbols = c('circle','circle','sqaure'),
+               color = I("grey"),
+               alpha = 0.65 ) %>% 
+  add_trace(data = IPS_testingData, 
+            x = ~posX, y = ~posY, 
+            type = 'scatter', 
+            mode = 'markers', 
+            color = I("black"),
+            alpha = 0.65 )%>% 
+  add_trace(data = oneAPAngle, 
+            x = ~posX, y = ~posY, z = ~avgSignal,   
+            type = "heatmap") %>% 
+  add_trace(data = AP_Loc, 
+            x = ~x, y = ~y, 
+            type = 'scatter', 
+            mode = 'markers', 
+            color = I('green'),
+            alpha = 0.65 ) %>% 
+  layout(showlegend = FALSE)
+
+fig
+
