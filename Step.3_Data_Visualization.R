@@ -34,6 +34,7 @@ library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
 library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
 library(latex2exp)  # Latex axis titles in ggplot2
 library(plotly)     # User interactive plots
+library(fields)     # Used for drawing heat maps
 
 set.seed(27)        # make random results reproducible
 
