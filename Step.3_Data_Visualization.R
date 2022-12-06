@@ -190,7 +190,7 @@ points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
 
 #Wrap all this into a function so that you can draw heat map for any angle and Mac address
 surfaceSS <- function(d, m, a) {
-  oneAPAngle = subset(d, MAC == AP_Loc[1, m] & angle == a)
+  oneAPAngle = subset(d, MAC == AP_Loc[m, 1] & angle == a)
   smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
   vizSmooth <- predictSurface(smoothSS)
   plot.surface(vizSmooth, type = "C")
@@ -198,6 +198,23 @@ surfaceSS <- function(d, m, a) {
   points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
   points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
 }
+
+surfaceSS_oneMac <- function(d, m) {
+  oneAPAngle = subset(d, MAC == AP_Loc[m, 1])
+  smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
+  vizSmooth <- predictSurface(smoothSS)
+  plot.surface(vizSmooth, type = "C")
+  points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
+  points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
+  points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
+}
+
+surfaceSS_oneMac(IPS_trainingData, 1)
+surfaceSS_oneMac(IPS_trainingData, 2)
+surfaceSS_oneMac(IPS_trainingData, 3)
+surfaceSS_oneMac(IPS_trainingData, 4)
+surfaceSS_oneMac(IPS_trainingData, 5)
+surfaceSS_oneMac(IPS_trainingData, 6)
 
 #Tell R to plot matrix
 parCur <- par(mfrow=c(2,2), mar=rep(2,4))
@@ -268,3 +285,19 @@ fig <- plot_ly(data = IPS_trainingData,
 
 fig
 
+varList=c("posX", "posY")
+
+actualXY <- IPS_testingData[ , varList]
+
+estXYk1 <- as.data.frame(estXYk1)
+estXYk3 <- as.data.frame(estXYk3)
+estXYk5 <- as.data.frame(estXYk5)
+
+errorDist <- function(est_data, act_data){
+  dist=sqrt((act_data$posX-est_data$posX)^2+(act_data$posY-est_data$posY)^2)
+}
+
+dist <- errorDist(est_data = estXYk1, act_data = actualXY)
+
+sum(dist)/length(dist)
+median(dist)
