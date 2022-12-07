@@ -3,33 +3,33 @@
 #--------------------------------------------------------------#
 
 library(tidyverse)  # Load core packages: 
-                    # ggplot2,   for data visualization.
-                    # dplyr,     for data manipulation.
-                    # tidyr,     for data tidying.
-                    # purrr,     for functional programming.
-                    # tibble,    for tibbles, a modern re-imagining of data frames.
-                    # stringr,   for strings.
-                    # forcats,   for factors.
-                    # lubridate, for date/times.
-                    # readr,     for reading .csv, .tsv, and .fwf files.
-                    # readxl,    for reading .xls, and .xlxs files.
-                    # feather,   for sharing with Python and other languages.
-                    # haven,     for SPSS, SAS and Stata files.
-                    # httr,      for web apis.
-                    # jsonlite   for JSON.
-                    # rvest,     for web scraping.
-                    # xml2,      for XML.
-                    # modelr,    for modelling within a pipeline
-                    # broom,     for turning models into tidy data
-                    # hms,       for times.
+# ggplot2,   for data visualization.
+# dplyr,     for data manipulation.
+# tidyr,     for data tidying.
+# purrr,     for functional programming.
+# tibble,    for tibbles, a modern re-imagining of data frames.
+# stringr,   for strings.
+# forcats,   for factors.
+# lubridate, for date/times.
+# readr,     for reading .csv, .tsv, and .fwf files.
+# readxl,    for reading .xls, and .xlxs files.
+# feather,   for sharing with Python and other languages.
+# haven,     for SPSS, SAS and Stata files.
+# httr,      for web apis.
+# jsonlite   for JSON.
+# rvest,     for web scraping.
+# xml2,      for XML.
+# modelr,    for modelling within a pipeline
+# broom,     for turning models into tidy data
+# hms,       for times.
 
 library(magrittr)   # Pipeline operator
 library(lobstr)     # Visualizing abstract syntax trees, stack trees, and object sizes
 library(pander)     # Exporting/converting complex pandoc documents, EX: df to Pandoc table
 library(ggforce)    # More plot functions on top of ggplot2
 library(ggpubr)     # Automatically add p-values and significance levels  plots. 
-                    # Arrange and annotate multiple plots on the same page. 
-                    # Change graphical parameters such as colors and labels.
+# Arrange and annotate multiple plots on the same page. 
+# Change graphical parameters such as colors and labels.
 library(sf)         # Geo-spatial vector manipulation: points, lines, polygons
 library(kableExtra) # Generate 90 % of complex/advanced/self-customized/beautiful tables
 library(latex2exp)  # Latex axis titles in ggplot2
@@ -188,25 +188,83 @@ points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
 points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
 points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
 
-#Wrap all this into a function so that you can draw heat map for any angle and Mac address
-surfaceSS <- function(d, m, a) {
-  oneAPAngle = subset(d, MAC == AP_Loc[m, 1] & angle == a)
-  smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
-  vizSmooth <- predictSurface(smoothSS)
-  plot.surface(vizSmooth, type = "C")
-  points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
-  points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
-  points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
-}
-
+#Wrap all this into a function so that you can draw heat map for Mac address
 surfaceSS_oneMac <- function(d, m) {
-  oneAPAngle = subset(d, MAC == AP_Loc[m, 1])
-  smoothSS <- Tps(oneAPAngle[, c("posX", "posY")], oneAPAngle$avgSignal)
+  oneAP = subset(d, MAC == AP_Loc[m, 1])
+  smoothSS <- Tps(oneAP[, c("posX", "posY")], oneAP$avgSignal)
   vizSmooth <- predictSurface(smoothSS)
-  plot.surface(vizSmooth, type = "C")
-  points(oneAPAngle$posX, oneAPAngle$posY, pch=19, col="grey", cex = 0.5)
+  plot.surface(vizSmooth, xlim=c(-1, 35), ylim=c(-3, 14.5))
+  points(oneAP$posX, oneAP$posY, pch=19, col="grey", cex = 0.5)
   points(IPS_testingData$posX, IPS_testingData$posY, pch=19, col="black", cex = 0.5)
-  points(AP_Loc$x, AP_Loc$y, pch=15, cex = 1)
+  points(AP_Loc$x[m], AP_Loc$y[m], pch=15, cex = 1)
+  segments(7.8, 2.3, 7.8, -3.4,
+           lwd = 1, col = "black")
+  segments(11.3,2.3, 11.3,-3.4, 
+           lwd = 1, col = "black")
+  segments(16.1,2.3, 16.1,-3.4,
+           lwd = 1, col = "black")
+  segments(19.8,2.3, 19.8,-3.4,
+           lwd = 1, col = "black")
+  segments(22.1,2.3, 22.1,-3.4,
+           lwd = 1, col = "black")
+  segments(24.4,2.3, 24.4,-3.4,
+           lwd = 1, col = "black")
+  segments(28,2.3, 28,-3.4,
+           lwd = 1, col = "black")
+  segments(30.3,2.3, 30.3,-3.4,
+           lwd = 1, col = "black")
+  segments(9,14.2, 9,9.7,
+           lwd = 1, col = "black")
+  segments(11.5,14.2, 11.5,9.7,
+           lwd = 1, col = "black")
+  segments(13.8,14.2, 13.8,9.7, 
+           lwd = 1, col = "black")
+  segments(16.2,14.2, 16.2,9.7,
+           lwd = 1, col = "black")
+  segments(13.8,14.2, 13.8,9.7, 
+           lwd = 1, col = "black")
+  segments(19.7,14.2, 19.7,9.7,
+           lwd = 1, col = "black")
+  segments(22.1,14.2, 22.1,9.7,
+           lwd = 1, col = "black")
+  segments(25.6,14.2, 25.6,9.7,
+           lwd = 1, col = "black")
+  segments(28.1,14.2, 28.1,9.7,
+           lwd = 1, col = "black")
+  segments(30.5,14.2, 30.5,9.7,
+           lwd = 1, col = "black")
+  segments(3,9.7, 33.8,9.7,
+           lwd = 1, col = "black")
+  segments(3,14.2, 33.8,14.2,
+           lwd = 1, col = "black")
+  segments(3,2.3, 33.8,2.3,
+           lwd = 1, col = "black")
+  segments(3,-3.4, 33.8,-3.4,
+           lwd = 1, col = "black")
+  segments(3,2.3, 3,-3.4,
+           lwd = 1, col = "black")
+  segments(3,9.7, 3,14.2,
+           lwd = 1, col = "black")
+  segments(33.8,-3.4, 33.8,14.2,
+           lwd = 1, col = "black")
+  polygon(x = c(3, 3, 7.9, 7.9),  
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
+  polygon(x = c(14, 14, 19.9, 19.9),  
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
+  polygon(x = c(27, 27, 31, 31),  
+          y = c(4, 6.4, 6.4, 4),    
+          border = "black",             
+          lwd = 1)                   
+  segments(-0.5,-1.2, -0.5,14.2,
+           lwd = 1, col = "black")
+  segments(-0.5,-1.2, 3, -1.2,
+           lwd = 1, col = "black")
+  segments(-0.5,14.2, 3,14.2,
+           lwd = 1, col = "black")
 }
 
 surfaceSS_oneMac(IPS_trainingData, 1)
@@ -215,48 +273,6 @@ surfaceSS_oneMac(IPS_trainingData, 3)
 surfaceSS_oneMac(IPS_trainingData, 4)
 surfaceSS_oneMac(IPS_trainingData, 5)
 surfaceSS_oneMac(IPS_trainingData, 6)
-
-#Tell R to plot matrix
-parCur <- par(mfrow=c(2,2), mar=rep(2,4))
-#Call surfaceSS 4 times to draw 4 heatmaps
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=0)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=45)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=90)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=135)
-#Reset plotting parameters for future plots
-par(parCur)
-
-parCur <- par(mfrow=c(2,2), mar=rep(2,4))
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=180)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=225)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=270)
-mapply(surfaceSS, 
-       d=list(data=IPS_trainingData), 
-       m =1, 
-       a=315)
-par(parCur)
-
 
 ## Using Plotly Heat Map
 fig <- plot_ly(data = IPS_trainingData, 
