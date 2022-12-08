@@ -382,7 +382,6 @@ fig
 
 ```{r}
 varList=c("posX", "posY")
-
 actualXY <- IPS_testingData[ , varList]
 
 estXYk1 <- as.data.frame(estXYk1)
@@ -393,10 +392,13 @@ errorDist <- function(est_data, act_data){
   dist=sqrt((act_data$posX-est_data$posX)^2+(act_data$posY-est_data$posY)^2)
 }
 
-dist <- errorDist(est_data = estXYk1, act_data = actualXY)
+mean(errorDist(est_data = estXYk1, act_data = actualXY))
+mean(errorDist(est_data = estXYk3, act_data = actualXY))
+mean(errorDist(est_data = estXYk5, act_data = actualXY))
 
-sum(dist)/length(dist)
-median(dist)
+median(errorDist(est_data = estXYk1, act_data = actualXY))
+median(errorDist(est_data = estXYk3, act_data = actualXY))
+median(errorDist(est_data = estXYk5, act_data = actualXY))
 ```
 
 

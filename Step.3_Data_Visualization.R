@@ -142,6 +142,17 @@ floorErrorMap <- function(estXY, actualXY, trainPoints = NULL, AP = NULL){
            lwd = 1, col = "black")
 }
 
+estXYk1 <- predXY(newSignals = IPS_testingData[ , 7:12], 
+                  newAngles = IPS_testingData[ , 5], 
+                  IPS_trainingData, numAngles = 3, k = 1)
+
+estXYk3 <- predXY(newSignals = IPS_testingData[ , 7:12], 
+                  newAngles = IPS_testingData[ , 5], 
+                  IPS_trainingData, numAngles = 3, k = 3)
+
+estXYk5 <- predXY(newSignals = IPS_testingData[ , 7:12], 
+                  newAngles = IPS_testingData[ , 5], 
+                  IPS_trainingData, numAngles = 3, k = 5)
 
 #--------------------------------------------------------------#
 #-------------------------Step 5: Data Plot--------------------#
@@ -301,8 +312,8 @@ fig <- plot_ly(data = IPS_trainingData,
 
 fig
 
-varList=c("posX", "posY")
 
+varList=c("posX", "posY")
 actualXY <- IPS_testingData[ , varList]
 
 estXYk1 <- as.data.frame(estXYk1)
@@ -313,7 +324,12 @@ errorDist <- function(est_data, act_data){
   dist=sqrt((act_data$posX-est_data$posX)^2+(act_data$posY-est_data$posY)^2)
 }
 
-dist <- errorDist(est_data = estXYk1, act_data = actualXY)
+mean(errorDist(est_data = estXYk1, act_data = actualXY))
+mean(errorDist(est_data = estXYk3, act_data = actualXY))
+mean(errorDist(est_data = estXYk5, act_data = actualXY))
 
-sum(dist)/length(dist)
-median(dist)
+median(errorDist(est_data = estXYk1, act_data = actualXY))
+median(errorDist(est_data = estXYk3, act_data = actualXY))
+median(errorDist(est_data = estXYk5, act_data = actualXY))
+
+
