@@ -3,10 +3,10 @@
 
 ```
 📦Indoor_positioning_system
- ┣ 📂clean_data  //After Data Tidying
- ┣ 📂img         //Visualizations
- ┣ 📂lib         //Supplementary Materials
- ┣ 📂raw_data    //Before Data Tidying
+ ┣ 📂clean_data                        //After Data Tidying
+ ┣ 📂img                               //Visualizations
+ ┣ 📂lib                               //Supplementary Materials
+ ┣ 📂raw_data                          //Before Data Tidying
  ┣ 📄LICENSE
  ┣ 📄README.md
  ┣ 📄Step.1_Data_Cleaning.qmd
@@ -30,7 +30,7 @@
 Identify the physical location of devices that are connected to the network.
 <br>
 <br>
-<img src="img/grid.png" width="300">
+<img src="img/grid.png" width="500">
 </p>
 
 </br>
