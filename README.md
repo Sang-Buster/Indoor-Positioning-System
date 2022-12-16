@@ -24,23 +24,22 @@
 </a>
 </p>
 
-## Problem
+
+<h2 align="center">Problem</h2>
 <p align="center">
 Identify the physical location of devices that are connected to the network.
 <br>
 <img src="img/grid.png" width="300">
 </p>
 
----
+<h2 align="center">Goals</h2>
 
-## Goals
 - Create a model that takes a set of signal strengths of the relevant access points to a connected device.
 - Predicts the physical location of that device. 
 - Quantify the accuracy and precision of the model.
 
----
 
-## Results
+<h2 align="center">Results</h2>
 <div align="center">
 <table>
   <tr>
