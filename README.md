@@ -3,9 +3,9 @@
 
 ```
 📦Indoor_positioning_system
- ┣ 📂clean_data								//After Data Tidying
- ┣ 📂img									//Visualizations
- ┣ 📂lib									//Supplementary Materials
+ ┣ 📂clean_data						//After Data Tidying
+ ┣ 📂img									    //Visualizations
+ ┣ 📂lib								    	//Supplementary Materials
  ┣ 📂raw_data								//Before Data Tidying
  ┣ 📄LICENSE
  ┣ 📄README.md
@@ -25,8 +25,11 @@
 </p>
 
 ## Problem
+<p align="center">
 Identify the physical location of devices that are connected to the network.
-![FloorMap](img/grid.png)
+<br>
+<img src="img/grid.png" width="300">
+</p>
 
 ## Goals
 - Create a model that takes a set of signal strengths of the relevant access points to a connected device.
