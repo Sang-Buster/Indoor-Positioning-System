@@ -31,10 +31,14 @@ Identify the physical location of devices that are connected to the network.
 <img src="img/grid.png" width="300">
 </p>
 
+---
+
 ## Goals
 - Create a model that takes a set of signal strengths of the relevant access points to a connected device.
 - Predicts the physical location of that device. 
 - Quantify the accuracy and precision of the model.
+
+---
 
 ## Results
 <div align="center">
