@@ -3,19 +3,20 @@
 
 ```
 📦Indoor_positioning_system
- ┣ 📂clean_data                        //After Data Tidying
- ┣ 📂img                               //Visualizations
+ ┣ 📂img                               //Data Visualizations
  ┣ 📂lib                               //Supplementary Materials
- ┣ 📂raw_data                          //Before Data Tidying
+ ┣ 📂src                               //Source Code
+ ┃ ┣ 📂clean_data
+ ┃ ┣ 📂raw_data
+ ┃ ┣ 📄Step.1_Data_Cleaning.qmd
+ ┃ ┣ 📄Step.1_Data_Cleaning.R
+ ┃ ┣ 📄Step.2_Data_Analysis.qmd
+ ┃ ┣ 📄Step.2_Data_Analysis.R
+ ┃ ┣ 📄Step.3_Data_Visualization.qmd
+ ┃ ┣ 📄Step.3_Data_Visualization.R
+ ┃ ┗ 📄Step.99_Final_Complete_Code.R
  ┣ 📄LICENSE
- ┣ 📄README.md
- ┣ 📄Step.1_Data_Cleaning.qmd
- ┣ 📄Step.1_Data_Cleaning.R
- ┣ 📄Step.2_Data_Analysis.qmd
- ┣ 📄Step.2_Data_Analysis.R
- ┣ 📄Step.3_Data_Visualization.qmd
- ┣ 📄Step.3_Data_Visualization.R
- ┗ 📄Step.Final_Complete_Code.R
+ ┗ 📄README.md
 ```
 
 <p align="right">
