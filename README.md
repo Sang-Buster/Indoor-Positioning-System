@@ -29,6 +29,7 @@
 <p align="center">
 Identify the physical location of devices that are connected to the network.
 <br>
+<br>
 <img src="img/grid.png" width="300">
 </p>
 
