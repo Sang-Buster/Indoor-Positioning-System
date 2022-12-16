@@ -3,10 +3,10 @@
 
 ```
 📦Indoor_positioning_system
- ┣ 📂clean_data						//After Data Tidying
- ┣ 📂img									    //Visualizations
- ┣ 📂lib								    	//Supplementary Materials
- ┣ 📂raw_data								//Before Data Tidying
+ ┣ 📂clean_data  //After Data Tidying
+ ┣ 📂img         //Visualizations
+ ┣ 📂lib         //Supplementary Materials
+ ┣ 📂raw_data    //Before Data Tidying
  ┣ 📄LICENSE
  ┣ 📄README.md
  ┣ 📄Step.1_Data_Cleaning.qmd
