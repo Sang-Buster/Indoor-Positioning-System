@@ -20,7 +20,7 @@
 ```
 
 <p align="right">
-<a href="https://github.com/cyrus-pdx/Indoor_positioning_system/tree/SingSong" target="_blank">
+<a href="https://github.com/Sang-Buster/Indoor-Positioning-System" target="_blank">
 <img src="https://img.shields.io/badge/Wi--Fi IPS-v0.1-blue.svg?logo=Wikiquote" />
 </a>
 </p>
