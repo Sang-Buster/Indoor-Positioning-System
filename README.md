@@ -1,5 +1,5 @@
 <h1 align="center"> Wi-Fi Indoor Positioning System (IPS) <br/> based on <br/> K-Nearest Neighbors (KNN) Algorithm </h1>
-<b><p align="center">#WiFi fingerprinting  &emsp; #WiFi indoor positioning  &emsp; #K-nearest neighbor algorithm</p></b>
+<p align="center"><b>#WiFi fingerprinting  &emsp; #WiFi indoor positioning  &emsp; #K-nearest neighbor algorithm</b></p>
 
 ```
 📦Indoor_positioning_system
