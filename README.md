@@ -50,7 +50,7 @@ Identify the physical location of devices that are connected to the network.
   <tr>
     <th>RSSI Heat Map of All APs and Angles</th>
     <th>RSSI Heat Map based on Fast Thin Plate Regression </th>
-    <th>RSSI Heat Map based on Krigging Method</th>
+    <th>RSSI Heat Map based on Kriging Method</th>
   </tr>
   <tr>
     <td><p align="center"><img src="img/haetMap_1Mac8Angles/Mac-C0_Ang-0.png" width="380"></p></td>
