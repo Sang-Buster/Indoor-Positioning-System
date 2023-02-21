@@ -28,11 +28,12 @@
 
 <h2 align="center">Problem</h2>
 <p align="center">
-Identify the physical location of devices that are connected to the network.
+Identify the physical location of indoor devices that are connected to the network.
 <br>
 <br>
-<img src="img/grid.png" width="500">
+<img src="img/Overview-1.png" width="500">
 </p>
+
 
 </br>
 
