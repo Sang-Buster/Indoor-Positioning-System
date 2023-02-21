@@ -31,7 +31,7 @@
 Identify the physical location of indoor devices that are connected to the network.
 <br>
 <br>
-<img src="img/Overview-1.png" width="500">
+<img src="img/grid.png" width="500">
 </p>
 
 
